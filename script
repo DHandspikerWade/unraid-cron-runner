@@ -1,0 +1,46 @@
+<?php
+define('RECORDER_DIRECTORY', '/mnt/user/Downloads/twitch');
+define('TO_KEEP', 10);
+
+$files = scandir(RECORDER_DIRECTORY, SCANDIR_SORT_DESCENDING);
+$creators = [];
+foreach ($files as $file) {
+    $matches = [];
+    if (preg_match('/^(\w+)\s\(live\).*\.m[pk][4v]$/', $file, $matches)) {
+        $creators[$matches[1]][] = realpath(RECORDER_DIRECTORY . DIRECTORY_SEPARATOR . $file);
+    }
+
+    if (preg_match('/\.part$/', $file)) {
+        $full_part_path = realpath(RECORDER_DIRECTORY . DIRECTORY_SEPARATOR . $file);
+        if ($diff = time() - filemtime($full_part_path)) {
+            if ($diff > 60 * 60 * 96) {
+                unlink($full_part_path);
+            }
+        }
+    }
+
+    // Delete twitch chat logs. I don't care about them
+    if (preg_match('/\.rechat\.json$/', $file)) {
+        unlink(realpath(RECORDER_DIRECTORY . DIRECTORY_SEPARATOR . $file));
+    }
+
+    // Delete youtube chat logs. See Twitch comment
+    if (preg_match('/\.live\_chat\.json$/', $file)) {
+        unlink(realpath(RECORDER_DIRECTORY . DIRECTORY_SEPARATOR . $file));
+    }
+
+    // Delete youtube chat logs. See Twitch comment
+    if (preg_match('/\.info\.json$/', $file)) {
+        unlink(realpath(RECORDER_DIRECTORY . DIRECTORY_SEPARATOR . $file));
+    }
+}
+
+foreach ($creators as $creator) {
+    if (count($creator) > TO_KEEP) {
+        while (count($creator) > TO_KEEP) {
+            $old_file = array_pop($creator);
+            echo 'Deleting: ' . $old_file . PHP_EOL;
+            unlink($old_file);
+        }
+    }
+}

@@ -1,0 +1,2 @@
+# run the test script every minute and output whatever it echoes in a log file
+0 5 * * * /usr/local/bin/php /cron_scripts/twitch.php > /cron_scripts/twitch.log 2>&1
