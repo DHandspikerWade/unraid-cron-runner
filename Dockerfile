@@ -13,5 +13,5 @@ WORKDIR /cron_scripts
 VOLUME [ "/mnt/user" ]
 
 COPY run.sh /run.sh
-CMD /run.sh
+CMD ["sh", "/run.sh"]
 
