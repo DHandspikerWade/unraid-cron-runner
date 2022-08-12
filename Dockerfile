@@ -1,12 +1,17 @@
+# UnRAID is based on Slackware, but Slackware containers are a pain. So I'm pretending Debian is close enough for most scripts 
 FROM php:8.1-cli
 
-RUN apt-get update && apt-get -y install cron
+# Keeping apt cache to make dependency install by scripts easier
+RUN apt-get update -q && apt-get -y install cron
 
-RUN mkdir /cron_scripts
+COPY crontab_builder.php /
+RUN mkdir /cron_scripts /tmp/cron_scripts
+VOLUME /cron_scripts
 WORKDIR /cron_scripts
 
-COPY script /cron_scripts/twitch.php
-RUN touch twitch.log
+# Default UnRAID pool storage
+VOLUME [ "/mnt/user" ]
 
-COPY ./crontab /etc/cron.d/crontab
-RUN chmod 0644 /etc/cron.d/crontab && /usr/bin/crontab /etc/cron.d/crontab
+COPY run.sh /run.sh
+CMD /run.sh
+
