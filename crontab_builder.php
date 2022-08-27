@@ -41,8 +41,9 @@ foreach (array_diff(scandir($full_path), ['.', '..']) as $script) {
 		$lines = array_values($lines);
 
 		if (count($lines)) {
-			if (preg_match('/\#{1}\s?((?:[\*\d]\s){4}[\*\d])/', $lines[0], $matches)) {
-				$schedule = $matches[1];
+			// https://stackoverflow.com/a/57639657
+			if (preg_match('/\#(@(annually|yearly|monthly|weekly|daily|hourly|reboot))|(@every (\d+(ns|us|µs|ms|s|m|h))+)|((((\d+,)+\d+|(\d+(\/|-)\d+)|\d+|\*) ?){5,7})/', $lines[0], $matches)) {
+				$schedule = $matches[0];
 			}
 		}
 	}
