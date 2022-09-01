@@ -43,7 +43,6 @@ foreach (array_diff(scandir($full_path), ['.', '..']) as $script) {
 		if (count($lines)) {
 			// https://stackoverflow.com/a/57639657
 			if (preg_match('/\#{1}\s?((?:[\*\d](?:\/\d{1,2}){0,1}\s){4}[\*\d])/', $lines[0], $matches)) {
-				echo "Matched: " . $matches[0] . PHP_EOL;
 				$schedule = $matches[1];
 			}
 		}
